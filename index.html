@@ -1,1 +1,224 @@
-Hello World!!
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>역사 연대기 — 한눈에 보는 타임라인</title>
+<style>
+:root{
+  --bg:#F5F7F8; --panel:#FFFFFF; --ink:#232A33; --ink2:#5A6675; --ink3:#8B96A3;
+  --hair:#D9E0E5; --grid:rgba(35,42,51,.08);
+  --accent:#3A5FBF;
+  --c0:#3A5FBF; --c1:#C0392B; --c2:#1F8A70;
+  --shadow:0 8px 28px rgba(20,30,50,.10);
+  --shadowHover:0 14px 40px rgba(20,30,50,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#161A22; --panel:#1C212C; --ink:#E4E9F0; --ink2:#98A3B3; --ink3:#6B7686;
+    --hair:#2A3140; --grid:rgba(228,233,240,.07);
+    --accent:#6B8FE6;
+    --c0:#6B8FE6; --c1:#D2604F; --c2:#279B8F;
+    --shadow:0 10px 30px rgba(0,0,0,.45);
+    --shadowHover:0 16px 44px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161A22; --panel:#1C212C; --ink:#E4E9F0; --ink2:#98A3B3; --ink3:#6B7686;
+  --hair:#2A3140; --grid:rgba(228,233,240,.07);
+  --accent:#6B8FE6;
+  --c0:#6B8FE6; --c1:#D2604F; --c2:#279B8F;
+  --shadow:0 10px 30px rgba(0,0,0,.45);
+  --shadowHover:0 16px 44px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic','Segoe UI',sans-serif;
+  font-size:15px; line-height:1.6;
+  display:flex; flex-direction:column;
+}
+.serif{font-family:'Nanum Myeongjo','Noto Serif KR','AppleMyungjo','Songti SC',serif}
+
+/* 배경의 은은한 세로 눈금 — 타임라인 페이지의 그리드를 연상 */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 120px);
+  mask-image:linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+}
+
+main{
+  position:relative; z-index:1;
+  width:min(1060px, 100% - 48px);
+  margin:0 auto; padding:64px 0 40px;
+  flex:1;
+}
+
+/* ── hero ── */
+.hero{text-align:center; margin-bottom:56px}
+.hero .eyebrow{
+  font-size:12px; letter-spacing:.35em; text-transform:uppercase;
+  color:var(--ink3); margin-bottom:14px;
+}
+.hero h1{
+  font-family:'Nanum Myeongjo','Noto Serif KR','AppleMyungjo',serif;
+  font-size:clamp(30px, 5vw, 44px); font-weight:700; letter-spacing:.04em;
+  margin:0 0 14px; text-wrap:balance;
+}
+.hero p{color:var(--ink2); max-width:560px; margin:0 auto; text-wrap:pretty}
+
+/* hero 아래 장식 눈금자 */
+.ruler{
+  display:flex; justify-content:center; align-items:flex-end; gap:0;
+  margin:30px auto 0; max-width:420px; height:18px;
+  border-bottom:1px solid var(--hair);
+}
+.ruler i{flex:1; border-left:1px solid var(--hair); height:7px}
+.ruler i:nth-child(5n+1){height:14px}
+.ruler i:last-child{border-right:1px solid var(--hair)}
+
+/* ── cards ── */
+.cards{
+  display:grid; gap:22px;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+}
+.card{
+  --c:var(--c0);
+  position:relative; display:flex; flex-direction:column;
+  background:var(--panel); border:1px solid var(--hair); border-radius:14px;
+  padding:26px 26px 22px; text-decoration:none; color:inherit;
+  box-shadow:var(--shadow); overflow:hidden;
+  transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+.card:hover, .card:focus-visible{
+  transform:translateY(-4px); box-shadow:var(--shadowHover); border-color:var(--c);
+  outline:none;
+}
+.card::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:3px;
+  background:var(--c); opacity:.9;
+}
+.card .range{
+  font-size:11.5px; letter-spacing:.12em; color:var(--ink3);
+  text-transform:uppercase; margin-bottom:10px;
+}
+.card h2{
+  font-family:'Nanum Myeongjo','Noto Serif KR','AppleMyungjo',serif;
+  font-size:23px; font-weight:700; margin:0 0 8px; letter-spacing:.02em;
+}
+.card .desc{font-size:13.5px; color:var(--ink2); margin:0 0 20px; flex:1; text-wrap:pretty}
+
+/* 카드 속 미니 타임라인 */
+.mini{
+  position:relative; height:34px; margin-bottom:18px;
+  border-bottom:1px solid var(--hair);
+}
+.mini .bar{
+  position:absolute; height:7px; border-radius:99px; bottom:12px;
+  background:var(--c); opacity:.28;
+}
+.mini .bar.hi{opacity:.85; height:7px}
+.mini .dot{
+  position:absolute; bottom:9.5px; width:12px; height:12px; border-radius:50%;
+  background:var(--panel); border:2.5px solid var(--c);
+}
+.mini .tick{
+  position:absolute; bottom:0; width:1px; height:6px; background:var(--hair);
+}
+
+.card .go{
+  display:flex; align-items:center; gap:8px;
+  font-size:13px; font-weight:600; color:var(--c);
+}
+.card .go .arrow{transition:transform .22s ease}
+.card:hover .go .arrow, .card:focus-visible .go .arrow{transform:translateX(4px)}
+
+.card.korea{--c:var(--c0)}
+.card.world{--c:var(--c2)}
+.card.three{--c:var(--c1)}
+
+footer{
+  position:relative; z-index:1;
+  text-align:center; padding:22px; font-size:12px; color:var(--ink3);
+  border-top:1px solid var(--hair);
+}
+
+@media (max-width:640px){
+  main{padding-top:44px}
+  .hero{margin-bottom:38px}
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="eyebrow">Horizontal Chronicles</div>
+    <h1>한눈에 보는 역사 연대기</h1>
+    <p>인류사의 큰 흐름부터 한국사의 왕조 교체, 삼국지의 군웅할거까지 —
+       세 개의 가로 타임라인으로 시간의 축을 따라 걸어 보세요.</p>
+    <div class="ruler" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+  </section>
+
+  <section class="cards">
+    <a class="card world" href="world.html">
+      <div class="range">기원전 3000년 — 현재</div>
+      <h2>인류사</h2>
+      <p class="desc">메소포타미아 문명에서 현대까지, 주요 문명과 국가의 흥망을
+         하나의 축 위에 나란히 놓고 비교합니다.</p>
+      <div class="mini" aria-hidden="true">
+        <span class="tick" style="left:0"></span><span class="tick" style="left:25%"></span>
+        <span class="tick" style="left:50%"></span><span class="tick" style="left:75%"></span>
+        <span class="tick" style="left:100%"></span>
+        <span class="bar" style="left:2%; width:30%"></span>
+        <span class="bar hi" style="left:36%; width:34%"></span>
+        <span class="bar" style="left:74%; width:24%"></span>
+        <span class="dot" style="left:52%"></span>
+      </div>
+      <div class="go">세계사 연대기 열기 <span class="arrow">→</span></div>
+    </a>
+
+    <a class="card korea" href="korea.html">
+      <div class="range">고조선 — 현재</div>
+      <h2>한국사</h2>
+      <p class="desc">고조선부터 삼국·고려·조선을 지나 오늘에 이르기까지,
+         한반도 왕조와 시대의 교체를 한 줄기로 따라갑니다.</p>
+      <div class="mini" aria-hidden="true">
+        <span class="tick" style="left:0"></span><span class="tick" style="left:25%"></span>
+        <span class="tick" style="left:50%"></span><span class="tick" style="left:75%"></span>
+        <span class="tick" style="left:100%"></span>
+        <span class="bar" style="left:0%; width:26%"></span>
+        <span class="bar hi" style="left:30%; width:26%"></span>
+        <span class="bar" style="left:60%; width:38%"></span>
+        <span class="dot" style="left:43%"></span>
+      </div>
+      <div class="go">한국사 연대기 열기 <span class="arrow">→</span></div>
+    </a>
+
+    <a class="card three" href="three-kingdoms.html">
+      <div class="range">184 — 280 · 후한말–삼국</div>
+      <h2>삼국지</h2>
+      <p class="desc">황건의 난에서 진(晉)의 통일까지 — 정사와 연의를 나란히 비교하며
+         군웅과 사건을 촘촘하게 담았습니다.</p>
+      <div class="mini" aria-hidden="true">
+        <span class="tick" style="left:0"></span><span class="tick" style="left:25%"></span>
+        <span class="tick" style="left:50%"></span><span class="tick" style="left:75%"></span>
+        <span class="tick" style="left:100%"></span>
+        <span class="bar" style="left:0%; width:44%"></span>
+        <span class="bar hi" style="left:20%; width:56%"></span>
+        <span class="bar" style="left:64%; width:34%"></span>
+        <span class="dot" style="left:31%"></span>
+      </div>
+      <div class="go">삼국지 연대기 열기 <span class="arrow">→</span></div>
+    </a>
+  </section>
+</main>
+
+<footer>세 타임라인 모두 마우스 휠·드래그로 시간 축을 탐색할 수 있습니다.</footer>
+</body>
+</html>
